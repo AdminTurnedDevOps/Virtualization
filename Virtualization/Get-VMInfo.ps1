@@ -20,7 +20,7 @@ param(
 
     [string]$VM,
 
-    [string]$Error,
+    [switch]$LogError,
 
     [int]$ServerIP
 
