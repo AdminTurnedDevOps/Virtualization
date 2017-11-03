@@ -47,7 +47,7 @@ PROCESS{
 END{}
 
 }
-Get-VMInfo -Name Name -Verbose | Out-File \\Path\To\Folder\ -ErrorVariable $Error
+Get-VMInfo -Name Name -Verbose | Out-File \\Path\To\Folder\
 
 Function Send-Mail {
 
