@@ -1,5 +1,4 @@
 ﻿Function Get-VMInfo {
-
 <#
 .SYNOPSIS
 This script is to pull information about the system state of all VM's in ESXi
