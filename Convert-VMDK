@@ -1,0 +1,60 @@
+#Download Microsoft Virtual Machine Converter and import the module below.
+
+Import-Module "C:\Program Files\Microsoft Virtual Machine Converter\MvmcCmdlet.psd1"
+
+Function Convert-VMDK {
+	param(
+	[cmdletbinding(ConfirmImpact='high')]
+
+		[parameter(mandatory=$true,ValueFromPipeline=$true)]
+		[string]$SourceLiteralPath,
+
+		[parameter(mandatory=$true)]
+		[string]$DesintationLiteralPath,
+
+		[string]$VhdType,
+
+		[string]$VhdFormat,
+
+		[string]$ErrorLog = "$env:USERPROFILE\Desktop\ErrorLog.txt",
+
+		[switch]$LogErrors
+
+)
+
+begin{}
+
+process {
+
+	$YesOrNo = Read-host "You are about to move a VMDK file to a VHDX file. Would you like to continue? Hit Y for yes or N for no"
+
+		IF ($YesOrNo -eq 'y') {
+	
+			Write-Verbose "Moving the VHD file will now begin"
+	TRY {
+					$EverythingOK = $true
+					ConvertTo-MvmcVirtualHardDisk -SourceLiteralPath $SourceLiteralPath `
+					-DestinationLiteralPath $DestinationLiteralPath `
+					-VhdType FixedHardDisk `
+					-VhdFormat Vhd `
+					-ErrorVariable ErrorsOccured 
+
+  } CATCH {
+			
+					$EverythingOK = $false
+					Write-Warning "The script has failed. The error log is on your desktop under the ErrorLog txt file"
+					IF($logErrors) {
+					$ErrorsOccured | Out-File $ErrorLog }
+	  
+			}
+
+	}
+
+		ELSEIF ($YesOrNo -eq 'n') {
+			Write-output "You have chosen the no option. This script will now exit"
+			exit
+
+			}
+		}
+end{}
+}
