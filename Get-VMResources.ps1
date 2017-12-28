@@ -33,8 +33,8 @@ process{
 					@{Name='SecondaryStatus' ;expression={$_.SecondaryStatusDescription}}
 				}
 
-            ELSEIF ($YesOrNo -like 'n')
-                { Measure-VM $VMName
+            		ELSEIF ($YesOrNo -like 'n')
+                		{ Measure-VM $VMName
 
 				Get-VMIntegrationService -VMName $VMName | Where-Object {($_.Name -like "Heartbeat")} |
 				Select-Object Name,Enabled,
