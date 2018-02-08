@@ -1,15 +1,11 @@
-Function Get-VMResources {
+Function Get-VMHeartbeat {
 	
     [cmdletbinding()]
 	param(
 		[parameter(mandatory=$true,ValueFromPipeline=$true)]
-        [ValidateNotNullOrEmpty()]
-        [ValidateCount(1,5)]
-        [string]$VMName,
-        
-        [string]$ErrorLog = 'C:\VMResourceErrorLog.txt',
-
-        [switch]$LogError
+		[ValidateNotNullOrEmpty()]
+		[ValidateCount(1,50)]
+		[string]$VMName
 
 	)
 
@@ -19,39 +15,43 @@ process{
         Write-Verbose "Beginning the collection of VM resources"
         Write-Verbose "Seeing if VM is enabled for collect resources"
 
-    TRY { $NoErrors = $true
 		$YesOrNo = Read-Host "Would you like to enable resource metering? If so, select Y. If the VM has already been enabled, please select N"
 
 			IF($YesOrNo -like 'y') 
 				{ Enable-VMResourceMetering -VMName $VMName 
 				  
-				  Measure-VM $VMName
+                  Measure-VM $VMName
+                  
+                  $VMIntegration_Params = @{
+                                            'VMName'=$VMName
+                                           }
 
-				  Get-VMIntegrationService -VMName $VMName | Where-Object {($_.Name -like "Heartbeat")} |
-				  Select-Object Name,Enabled,
-					@{Name='PrimaryStatus' ;expression={$_.PrimaryStatusDescription}},
-					@{Name='SecondaryStatus' ;expression={$_.SecondaryStatusDescription}}
+                    $VMIntegration = Get-VMIntegrationService @VMIntegration_Params | Where-Object {($_.Name -like "Heartbeat")}
+                        $IntegrationObjects1 = [PSCustomObject] @{
+                                                                  'Name'           = $VMIntegration.Name
+                                                                  'Enabled?'       = $VMIntegration.Enabled
+                                                                  'PrimaryStats'   = $VMIntegration.PrimaryStatusDescription
+                                                                  'SecondaryStats' = $VMIntegration.SecondaryStatusDescription
+                                                                 }
+                                           
 				}
 
-            		ELSEIF ($YesOrNo -like 'n')
-                		{ Measure-VM $VMName
+            ELSEIF ($YesOrNo -like 'n')
+                { Measure-VM $VMName
 
-				Get-VMIntegrationService -VMName $VMName | Where-Object {($_.Name -like "Heartbeat")} |
-				Select-Object Name,Enabled,
-					@{Name='PrimaryStatus' ;expression={$_.PrimaryStatusDescription}},
-					@{Name='SecondaryStatus' ;expression={$_.SecondaryStatusDescription}}
+                    $VMIntegration_Params = @{
+                        'VMName'=$VMName
+                                             }
+
+                         $VMIntegration = Get-VMIntegrationService @VMIntegration_Params | Where-Object {($_.Name -like "Heartbeat")}
+                            $IntegrationObjects1 = [PSCustomObject] @{
+                                                                      'Name'           = $VMIntegration.Name
+                                                                      'Enabled?'       = $VMIntegration.Enabled
+                                                                      'PrimaryStats'   = $VMIntegration.PrimaryStatusDescription
+                                                                      'SecondaryStats' = $VMIntegration.SecondaryStatusDescription
+                                                                     }
                 }
-        }#TRY Closing Bracket
-
-    CATCH {
-            $NoErrors = $false
-            Write-Warning "An error has occured. Please review the error log under C:\VMResourceErrorLog"
-            IF($LogError) 
-            { $Error | Out-File $ErrorLog }
-
-
-          }#CATCH Closing Bracket
-        
+      
         }#Process Closing Bracket
 
     end{}
