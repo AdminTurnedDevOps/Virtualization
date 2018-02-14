@@ -3,8 +3,8 @@ Function Get-VMHeartbeat {
     [cmdletbinding()]
 	param(
 		[parameter(mandatory=$true,ValueFromPipeline=$true)]
-        [ValidateNotNullOrEmpty()]
-        [ValidateCount(1,50)]
+        	[ValidateNotNullOrEmpty()]
+        	[ValidateCount(1,50)]
 		[string]$VMName
 
 	)
