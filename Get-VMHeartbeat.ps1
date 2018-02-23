@@ -4,7 +4,7 @@ Function Get-VMHeartbeat {
 	param(
 		[parameter(mandatory=$true,ValueFromPipeline=$true)]
         	[ValidateNotNullOrEmpty()]
-        	[ValidateCount(1,50)]
+        	[ValidateCount(1, 50)]
 		[string]$VMName
 
 	)
