@@ -57,4 +57,3 @@ Function Get-VMStatus {
                         Send-MailMessage @Mail_MessageParams
 
 }# Function
-Get-VMStatus
