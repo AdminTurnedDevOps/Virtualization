@@ -6,7 +6,6 @@ Function Get-VMHeartbeat {
         	[ValidateNotNullOrEmpty()]
         	[ValidateCount(1, 50)]
 		[string]$VMName
-
 	)
 
 begin{}
